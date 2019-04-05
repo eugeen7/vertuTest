@@ -1,0 +1,18 @@
+.ui-selectonemenu-filter-container {
+    font-size: 100% !important;
+    width: 100%;
+}
+
+.ui-selectonemenu-panel .ui-selectonemenu-filter-container .ui-icon {
+    position: absolute;
+    top: 10px;
+    right: 10%;
+}
+
+.ui-selectcheckboxmenu-filter-container {
+    width: 708px;
+}
+
+.ui-selectcheckboxmenu-filter-container>.ui-inputfield{
+    width: 680px;
+}

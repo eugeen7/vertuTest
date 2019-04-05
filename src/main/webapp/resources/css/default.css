@@ -1,0 +1,167 @@
+body {
+    background-color: #ffffff;
+    font-size: 12px;
+    font-family: Verdana, "Verdana CE",  Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+    color: #000000;  
+    margin: 10px;
+}
+
+h1 {
+    font-family: Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+    border-bottom: 1px solid #AFAFAF; 
+    font-size:  16px;
+    font-weight: bold;
+    margin: 0px;
+    padding: 0px;
+    color: #D20005;
+}
+
+a:link, a:visited {
+    color: #045491;
+    font-weight : bold;
+    text-decoration: none;
+}
+
+a:link:hover, a:visited:hover  {
+    color: #045491;
+    font-weight : bold;
+    text-decoration : underline;
+}
+
+.ui-layout-north {
+    z-index:20 !important;
+    overflow:visible !important;
+}
+
+.ui-layout-north .ui-layout-unit-content {
+    overflow:visible !important;
+}
+.ui-widget {
+    font-size: 90% !important;
+}
+.ui-button-text {
+    font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+    font-size: 11pt;
+    font-weight: normal;
+}
+.ui-menu {
+    color: whitesmoke;
+    background-color: whitesmoke;  
+}
+
+.ui-menubar .ui-menu-list {
+    color: whitesmoke;
+    background-color: whitesmoke;
+}
+
+.ui-datepicker {
+    font-size: 100% !important;
+}
+
+.mnBtn .ui-button {
+    background-color: whitesmoke;
+}
+
+.txtleft {
+    text-align: left !important;
+}
+
+.mncnt {
+    margin: 0 auto;
+    overflow-x: auto;
+    min-width: 700px;
+}
+
+.fnt12pt {
+    font-size: 12pt;
+}
+
+.fnt130prcnt {
+    font-size: 130% !important;
+}
+
+.fnt100prcnt {
+    font-size: 100% !important;
+}
+
+.fnt110prcnt {
+    font-size: 110% !important;
+}
+
+.rightfl {
+    text-align: right;
+}
+
+.txtalgncntr {
+    text-align: center;
+}
+
+.bldfnt {
+    font-weight: bold;
+}
+
+.txtbrdr {
+    border: 1px solid black;
+    border-radius: 3px;
+    padding: 2px;
+}
+
+.lngth550px {    
+    width: 560px;
+    height: 17px;
+}
+
+.lngth100px {    
+    width: 100px;
+    height: 17px;
+}
+
+.lngth200px {    
+    width: 200px;
+    height: 17px;
+}
+
+.lngth300px {    
+    width: 300px;
+    height: 17px;
+}
+
+.lngth330px {    
+    width: 330px;
+    height: 17px;
+}
+
+.pnglft10px {
+    padding-left: 10px;
+}
+
+.lngth350px {    
+    width: 350px;
+    height: 17px;
+}
+
+.lngth190px {    
+    width: 190px;
+    height: 17px;
+}
+
+.inlnl {
+    display: inline-block;
+}
+
+.mrgntopmns2prc {
+    margin-top: -2%;
+}
+
+.selmn {
+    width: 98% !important;
+}
+
+.hght370px {
+    height: 300px;
+}
+
+.mrgnbtm {
+    margin-bottom: 10px;
+}
+

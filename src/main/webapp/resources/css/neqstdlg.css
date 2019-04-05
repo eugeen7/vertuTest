@@ -1,0 +1,84 @@
+.hdpnl {
+    text-align: left;
+    font-size: 10pt;
+    width: 99.9%;
+    margin-left: -3px;
+}
+
+.rspemppnl {
+    /*margin-top: 0%;
+     margin-left: -3px;
+     font-size: 11pt;
+     color: #037;
+    */
+    font-size: 11pt;
+    color: #037;
+    width: 99.9%;
+}
+
+.rspemppnl1 {
+    font-size: 10pt;
+}
+
+.bldtxt {
+    font-weight: bold;
+}
+
+.txtdlgfld {
+    font-size: 10pt;
+    text-align: left;
+}
+
+.cntxtfld {
+    font-size: 10pt;
+    display: block;
+    color: black;
+}
+
+.selmn {
+    width: 98% !important;
+}
+
+.datplclose {
+    font-size: 90% !important;
+}
+
+.rspgrdc1 {
+    width: 80%;
+}
+
+.rspgrdc2 {
+    width: 20%;
+}
+
+.ui-datepicker {
+    font-size: 75% !important;
+}
+
+.hight520 {
+    min-height: 520px;
+}
+
+.wdth830 {
+    width: 830px;
+}
+
+.wdth856 {
+    width: 856px;
+}
+
+.clrblck {
+    color: black;
+}
+
+.clrred {
+    color: red;
+}
+
+.brdrnon {
+    border: none;
+}
+
+.fntbld {
+    font-weight: bold;
+}

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Договора страхования недвижимости</title>
+        <h:outputScript library="scripts" name="ru.js"/>
+        <h:outputStylesheet library="css" name="default.css"/>
+    </h:head>
+    <h:body>
+        <h:form id="frm">
+            <p:outputPanel id="mnpnl">
+                <p:messages id="msgs" closable="true" class="fnt130prcnt" redisplay="true" showDetail="true" showSummary="false">
+                    <p:autoUpdate />
+                </p:messages>
+                <p:panel id="ins_pnl" visible="#{insViewBean.insPnlVisible}" class="txtleft mncnt fnt130prcnt">
+                    <p:dataTable id="instb" value="#{insCntrBean.insContrLst}" var="ins" selectionMode="single" widgetVar="insTable"
+                                 selection="#{insCntrBean.insContr}" rowKey="#{ins.inscntrId}" 
+                                 filteredValue="#{insCntrBean.fltrInsContrLst}" rows="10" paginator="true" resizableColumns="true"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,25,50,100"
+                                 currentPageReportTemplate="({startRecord} - {endRecord} из {totalRecords}, Стр: {currentPage}/{totalPages})"
+                                 paginatorPosition="bottom" emptyMessage="Данные не найдены"
+                                 liveResize="true" reflow="true">
+
+                        <p:ajax event="rowSelect" process="instb" update="edinscntr"/>
+
+                        <f:facet name="header" id="tblhdr">
+                            <p:outputPanel id="glfltrtb" class="rightfl fnt110prcnt">
+                                <h:outputText value="Поиск:" />
+                                <p:spacer width="10px"/>
+                                <p:inputText id="globalFilter" onkeyup="PF('insTable').filter()" style="width:250px"/>
+                            </p:outputPanel>
+                        </f:facet>
+
+                        <p:column headerText="Серия - номер" sortBy="#{ins.insSrNum}" filterBy="#{ins.insSrNum}" filterMatchMode="contains" style="width: 10%" filterStyle="width: 99%">
+                            <h:outputText value="#{ins.insSrNum}" />
+                        </p:column>
+
+                        <p:column headerText="Дата заключения" sortBy="#{ins.cntrDate}" filterFunction="#{insVldtBean.filterByDate}" filterBy="#{ins.cntrDate}" style="width: 10%" filterStyle="width: 99%">
+                            <f:facet name="filter">
+                                <p:calendar id="cntrdate" size="10" locale="ru" pattern="dd.MM.yyyy" navigator="true"
+                                            readonlyInput="false" timeZone="#{jsfUtils.curTz}" label="Дата заключения"
+                                            converterMessage="Не правильный формат даты" validatorMessage="Не верно указана дата">
+                                    <p:ajax event="dateSelect"  oncomplete="PF('insTable').filter();" update="instb"/>
+                                    <p:ajax event="change"  oncomplete="PF('insTable').filter();" update="instb"/>
+                                </p:calendar>
+                            </f:facet>
+                            <h:outputText value="#{ins.cntrDate}">
+                                <f:convertDateTime pattern="dd.MM.yyyy"  locale="ru_RU" timeZone="#{jsfUtils.curTz}"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Страхователь" sortBy="#{ins.plchldrFk.fio}" filterBy="#{ins.plchldrFk.fio}" 
+                                  filterMatchMode="contains" style="width: 50%" filterStyle="width: 99%">
+                            <h:outputText value="#{ins.plchldrFk.surename} #{ins.plchldrFk.firstname} #{ins.plchldrFk.secondname}" />
+                        </p:column>
+
+                        <p:column headerText="Премия" sortBy="#{ins.insBonus}" filterBy="#{ins.insBonus}" 
+                                  filterMatchMode="contains" style="width: 10%" filterStyle="width: 99%">
+                            <h:outputText value="#{ins.insBonus}" >
+                                <f:convertNumber type="currency" currencySymbol="Р" maxIntegerDigits="10" maxFractionDigits="2"/> 
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Начало договора" sortBy="#{ins.cntrDateStrt}" filterFunction="#{insVldtBean.filterByDate}" filterBy="#{ins.cntrDateStrt}" style="width: 10%" filterStyle="width: 99%">
+                            <f:facet name="filter">
+                                <p:calendar id="cntrdatest" size="10" locale="ru" pattern="dd.MM.yyyy" navigator="true"
+                                            readonlyInput="false" timeZone="#{jsfUtils.curTz}" label="Дата начала действия договора"
+                                            converterMessage="Не правильный формат даты" validatorMessage="Не верно указана дата">
+                                    <p:ajax event="dateSelect"  oncomplete="PF('insTable').filter();" update="instb"/>
+                                    <p:ajax event="change"  oncomplete="PF('insTable').filter();" update="instb"/>
+                                </p:calendar>
+                            </f:facet>
+                            <h:outputText value="#{ins.cntrDateStrt}">
+                                <f:convertDateTime pattern="dd.MM.yyyy"  locale="ru_RU" timeZone="#{jsfUtils.curTz}"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Окончание договора" sortBy="#{ins.cntrDateEnd}" filterFunction="#{insVldtBean.filterByDate}" filterBy="#{ins.cntrDateEnd}" style="width: 10%" filterStyle="width: 99%">
+                            <f:facet name="filter">
+                                <p:calendar id="cntrdatend" size="10" locale="ru" pattern="dd.MM.yyyy" navigator="true"
+                                            readonlyInput="false" timeZone="#{jsfUtils.curTz}" label="Дата окончания действия договора"
+                                            converterMessage="Не правильный формат даты" validatorMessage="Не верно указана дата">
+                                    <p:ajax event="dateSelect"  oncomplete="PF('insTable').filter();" update="instb"/>
+                                    <p:ajax event="change"  oncomplete="PF('insTable').filter();" update="instb"/>
+                                </p:calendar>
+                            </f:facet>
+                            <h:outputText value="#{ins.cntrDateEnd}">
+                                <f:convertDateTime pattern="dd.MM.yyyy"  locale="ru_RU" timeZone="#{jsfUtils.curTz}"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <f:facet name="footer">
+                            <div style="text-align: left;">
+
+                                <p:commandButton id="rfjbtn" value="Обновить" process="@this" actionListener="#{insCntrBean.refresheInsConstrLst}"
+                                                 update="instb" oncomplete="PF('insTable').filter();"/>
+                                <p:spacer width="30px"/>
+                                <p:commandButton id="newinscntr" value="Новый договор" actionListener="#{insViewBean.createInsConstr}"
+                                                 process="@this" oncomplete="PF('insTable').filter();" update="@form:ins_pnl @form:insne_pnl"/>
+                                <p:spacer width="30px" height="5px"/>
+                                <p:commandButton id="edinscntr" value="Открыть договор" actionListener="#{insViewBean.editInsConstr}"
+                                                 disabled="#{insCntrBean.insContr == null ? true : false}" 
+                                                 process="@this" oncomplete="PF('insTable').filter();" update="@form:ins_pnl @form:insne_pnl"/>
+
+                            </div>
+                        </f:facet>
+                    </p:dataTable>
+                </p:panel>
+
+                <p:panel id="insne_pnl" visible="#{insViewBean.enInsVisible}" class="fnt130prcnt">
+                    <p:outputPanel id="insenfrm" class="fnt110prcnt">
+                        <p:panel id="neins_pnl" header="Договор страхования">
+                            <h:panelGrid columns="1" cellpadding="5" class="mncnt">
+                                <h:outputLabel value="Страхователь" class="bldfnt"/>
+                                <h:panelGrid id="clntgrd" columns="6" columnClasses="null,lngth550px txtbrdr,null,null,null">
+                                    <h:outputLabel value="ФИО:" for="fio"/>
+                                    <h:outputLabel id="fio"  
+                                                   value="#{clientCntrBean.plcHldr.surename} #{clientCntrBean.plcHldr.firstname} #{clientCntrBean.plcHldr.secondname}"/>
+                                    <p:spacer/>
+                                    <p:commandButton id="opnclients" value="Выбрать" process="@this" actionListener="#{clientCntrBean.findClientDlg}">
+                                        <p:ajax event="dialogReturn" update="clntgrd dtbthd psprtSrl psprtNum"/>
+                                    </p:commandButton>
+                                    <p:spacer/>
+                                    <p:commandButton id="edtclient" value="Изменить" process="@this" actionListener="#{clientCntrBean.editClientDlg}">
+                                        <p:ajax event="dialogReturn" update="clntgrd dtbthd psprtSrl psprtNum"/>
+                                    </p:commandButton>
+                                </h:panelGrid>
+                                <p:spacer/>
+                                <h:panelGrid columns="9" class="mrgntopmns2prc" columnClasses="null,lngth100px txtbrdr,null,null,null,lngth100px txtbrdr,null,null,lngth100px txtbrdr">
+                                    <h:outputLabel value="Дата рождения:" for="dtbthd"/>
+                                    <h:outputLabel id="dtbthd" value="#{clientCntrBean.plcHldr.birthday}" >
+                                        <f:convertDateTime locale="ru" pattern="dd.MM.yyyy" timeZone="#{jsfUtils.curTz}"/>
+                                    </h:outputLabel>
+                                    <p:spacer width="10px"/>
+                                    <h:outputLabel value="Паспорт"/>
+                                    <h:outputLabel value="Серия:" for="psprtSrl"/>
+                                    <h:outputLabel id="psprtSrl" value="#{clientCntrBean.plcHldr.psprtSrl}" />
+                                    <p:spacer width="10px"/>
+                                    <h:outputLabel value="Номер:" for="psprtNum"/>
+                                    <h:outputLabel id="psprtNum" value="#{clientCntrBean.plcHldr.psprtNum}" />
+                                </h:panelGrid>
+                                <hr/>
+                                <p:spacer/>
+                                <h:outputLabel value="Объект недвижимости" class="bldfnt"/>
+                                <h:panelGrid columns="3" >
+                                    <p:inputText id="country" value="#{insCntrBean.neEstObj.country}" size="35" required="true" label="Государство" 
+                                                 requiredMessage="Поле Государство должно быть заполнено"/>
+                                    <p:inputText id="oblast" value="#{insCntrBean.neEstObj.oblast}" size="34" required="true" label="Республика, край, область" 
+                                                 requiredMessage="Поле Республика, край, область должно быть заполнено"/>
+                                    <p:inputText id="district" value="#{insCntrBean.neEstObj.district}" size="34" required="true" label="Район" 
+                                                 requiredMessage="Поле Район должно быть заполнено"/>                                   
+                                </h:panelGrid>
+                                <h:panelGrid columns="3" class="mrgntopmns2prc" columnClasses="lngth300px, lngth300px pnglft10px, lngth200px pnglft10px">
+                                    <h:outputLabel id="lbest1" value="Государство" />
+                                    <h:outputLabel id="lbest2" value="Республика, край, область" />
+                                    <h:outputLabel id="lbest3" value="Район" />
+                                </h:panelGrid>
+                                <h:panelGrid columns="3">
+                                    <p:inputText id="locPoint" value="#{insCntrBean.neEstObj.locPoint}" size="35" required="true" label="Населённый пункт" 
+                                                 requiredMessage="Поле Населённый пункт должно быть заполнено"/>
+                                    <p:inputText id="street" value="#{insCntrBean.neEstObj.street}" size="34" required="true" label="Улица" 
+                                                 requiredMessage="Поле Улица должно быть заполнено"/>
+                                    <p:inputText id="zipCode" value="#{insCntrBean.neEstObj.zipCode}" size="34" required="true" label="Индекс" 
+                                                 requiredMessage="Поле Индекс должно быть заполнено"/>
+                                </h:panelGrid>
+                                <h:panelGrid columns="3" class="mrgntopmns2prc" columnClasses="lngth300px, lngth300px pnglft10px, lngth200px pnglft10px">
+                                    <h:outputLabel id="lbest4" value="Населённый пункт" />
+                                    <h:outputLabel id="lbest5" value="Улица" />
+                                    <h:outputLabel id="lbest6" value="Индекс" />
+                                </h:panelGrid>
+
+                                <h:panelGrid columns="4" >
+                                    <p:inputText id="buildNum" value="#{insCntrBean.neEstObj.buildNum}" size="25" label="Дом" required="true"
+                                                 converterMessage="Только цифры" requiredMessage="№ дома должен быть заполнен">
+                                        <p:keyFilter mask="int" for="buildNum"/>
+                                    </p:inputText>
+                                    <p:inputText id="corpus" value="#{insCntrBean.neEstObj.corpus}" size="25" required="true" label="Корпус" 
+                                                 requiredMessage="Поле Корпус должно быть заполнено"/>
+                                    <p:inputText id="building" value="#{insCntrBean.neEstObj.building}" size="25" required="true" label="Строение" 
+                                                 requiredMessage="Поле Строение должно быть заполнено"/>
+                                    <p:inputText id="aprtNum" value="#{insCntrBean.neEstObj.aprtNum}" size="23" required="true" label="Квартира" 
+                                                 requiredMessage="Поле Квартира должно быть заполнено"/>
+                                </h:panelGrid>
+                                <h:panelGrid columns="4" class="mrgntopmns2prc" columnClasses="lngth200px, lngth200px pnglft10px, lngth200px pnglft10px, lngth190px pnglft10px">
+                                    <h:outputLabel id="lbest7" value="Дом" />
+                                    <h:outputLabel id="lbest8" value="Корпус" />
+                                    <h:outputLabel id="lbest9" value="Строение" />
+                                    <h:outputLabel id="lbest10" value="Квартира" />
+                                </h:panelGrid>
+                                <hr/>
+                                <p:spacer/>
+                                <h:outputLabel value="Расчёт" class="bldfnt"/>
+                                <h:panelGrid columns="9">
+                                    <h:outputLabel value="Страховая сумма:" for="inssumm"/>
+                                    <p:inputNumber id="inssumm" value="#{insCntrBean.neInsContr.insSum}" symbol=" Р" symbolPosition="right"
+                                                   maxValue="10000000.00"
+                                                   decimalSeparator="," thousandSeparator="."  label="Страховая сумма" title="Страховая сумма" 
+                                                   required="true" requiredMessage="Страховая сумма обязательна"
+                                                   minValue="1.00" validatorMessage="Не верная сумма"
+                                                   converterMessage="Не верный формат. Введите в формате 00,00" class="fnt100prcnt"/>
+                                    <p:spacer width="10px"/>
+                                    <h:outputLabel value="Срок действия"/>
+                                    <h:outputLabel value="С:" for="dtstrt"/>
+                                    <p:calendar id="dtstrt" size="10" value="#{insCntrBean.neInsContr.cntrDateStrt}"
+                                                mindate="#{jsfUtils.currDate}" required="true"
+                                                locale="ru" pattern="dd.MM.yyyy" navigator="true"
+                                                readonlyInput="false" timeZone="#{jsfUtils.curTz}" 
+                                                label="Дата начала действия договора"
+                                                converterMessage="Не правильный формат даты" 
+                                                validatorMessage="Не верно указана дата"
+                                                requiredMessage="Дата начала действия договора обязательна">
+                                        <p:ajax event="dateSelect"/>
+                                        <p:ajax event="change"/>
+                                    </p:calendar>
+                                    <p:spacer width="10px"/>
+                                    <h:outputLabel value="По:" for="dtend"/>
+                                    <p:calendar id="dtend" size="10" value="#{insCntrBean.neInsContr.cntrDateEnd}"
+                                                mindate="#{jsfUtils.nextDayDate}" required="true"
+                                                locale="ru" pattern="dd.MM.yyyy" navigator="true"
+                                                readonlyInput="false" timeZone="#{jsfUtils.curTz}" 
+                                                label="Дата окончания действия договора"
+                                                converterMessage="Не правильный формат даты" 
+                                                validatorMessage="Не верно указана дата"
+                                                requiredMessage="Дата окончания действия договора обязательна">
+                                        <p:ajax event="dateSelect"/>
+                                        <p:ajax event="change"/>
+                                    </p:calendar>                                   
+                                </h:panelGrid>
+                                <h:panelGrid columns="5" id="calcgrd">
+                                    <h:outputLabel value="Тип недвижимости:" for="tpprpt"/>
+                                    <p:selectOneMenu id="tpprpt"  value="#{insCntrBean.prptTypeIdx}" required="true" requiredMessage="Тип недвижимости обязателен"
+                                                     panelStyle="font-size: 110% !important; width: 300px;" style="width: 250px !important;" filter="true" filterMatchMode="contains"
+                                                     title="Тип недвижимости" label="Тип недвижимости"> 
+                                        <p:ajax event="change"/>
+                                        <f:selectItem itemLabel="Не выбран" itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{insCntrBean.prptTypeLst}" var="prpts"
+                                                       itemLabel="#{prpts.prpName}" itemValue="#{prpts.prptpId}"/>
+                                    </p:selectOneMenu>
+                                    <p:spacer width="16px"/>
+                                    <h:outputLabel value="Год постройки:" for="ycnt"/>
+                                    <p:selectOneMenu id="ycnt"  value="#{insCntrBean.yearConstIdx}" required="true" requiredMessage="Год постройки обязателен"
+                                                     panelStyle="font-size: 110% !important; width: 300px;" style="width: 250px !important;" filter="true" filterMatchMode="contains"
+                                                     title="Год постройки" label="Год постройки"> 
+                                        <p:ajax event="change"/>
+                                        <f:selectItem itemLabel="Не выбран" itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{insCntrBean.yearConstLst}" var="ycnts"
+                                                       itemLabel="#{ycnts.constPrd}" itemValue="#{ycnts.ycnstId}"/>
+                                    </p:selectOneMenu>
+                                    <p:spacer/>
+                                    <p:spacer/>
+                                    <p:spacer/>
+                                    <p:spacer/>
+                                    <p:spacer/>
+                                    <h:outputLabel value="Площадь кв.м.:" for="plcb"/>
+                                    <p:selectOneMenu id="plcb"  value="#{insCntrBean.plcBldIdx}" required="true" requiredMessage="Площадь обязательна"
+                                                     panelStyle="font-size: 110% !important; width: 300px;" style="width: 250px !important;" filter="true" 
+                                                     filterMatchMode="contains"
+                                                     title="Площадь" label="Площадь"> 
+                                        <p:ajax event="change"/>
+                                        <f:selectItem itemLabel="Не выбрана" itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{insCntrBean.plcBldLst}" var="plc"
+                                                       itemLabel="#{plc.plcVal}" itemValue="#{plc.plcbldId}"/>
+                                    </p:selectOneMenu>
+                                    <p:spacer width="16px"/>
+                                    <h:outputLabel value="Дата расчёта:" for="datecalc"/>
+                                    <h:outputLabel id="datecalc" value="#{insCntrBean.neInsContr.cntrDateCalc}" >
+                                        <f:convertDateTime locale="ru" pattern="dd.MM.yyyy" timeZone="#{jsfUtils.curTz}"/>
+                                    </h:outputLabel>
+                                    <p:spacer/>
+                                    <p:spacer/>
+                                    <p:spacer/>
+                                    <p:spacer/>
+                                    <p:spacer/>
+                                    <p:commandButton value="Расчитать" process="@this inssumm dtstrt dtend tpprpt ycnt plcb" 
+                                                     actionListener="#{insCntrBean.calcBonus}"
+                                                     update="inssumm dtstrt dtend tpprpt ycnt plcb datecalc bonuslbl"/>
+                                    <p:spacer width="16px"/>
+                                    <p:spacer width="16px"/>
+                                    <h:outputLabel value="Премия:" class="bldfnt"/>
+                                    <h:outputLabel id="bonuslbl" value="#{insCntrBean.neInsContr.insBonus}" class="bldfnt"/>
+                                    <p:spacer/>
+                                    <p:spacer/>
+                                    <p:spacer/>
+                                    <p:spacer/>
+                                    <p:spacer/>
+                                    <h:outputLabel value="№ договора:" for="insNum"/>
+                                    <p:inputText id="insNum" value="#{insCntrBean.neInsContr.insNum}" 
+                                                 label="№ договора" title="№ договора" 
+                                                 required="true" requiredMessage="№ договора обязателен"
+                                                 validatorMessage="Не № договора"
+                                                 converterMessage="Не верный формат. Введите в формате 1 - 999999" class="fnt100prcnt"
+                                                 disabled="#{insCntrBean.insContrState == 2 ? true : false}">
+                                        <p:keyFilter mask="int" for="insNum"/>
+                                    </p:inputText>
+
+                                    <h:outputLabel value="Дата договора:" for="dtinscntr"/>
+                                    <h:outputLabel id="dtinscntr" value="#{insCntrBean.neInsContr.cntrDate}" >
+                                        <f:convertDateTime locale="ru" pattern="dd.MM.yyyy" timeZone="#{jsfUtils.curTz}"/>
+                                    </h:outputLabel>
+                                </h:panelGrid>
+                            </h:panelGrid>
+                        </p:panel>
+                    </p:outputPanel>
+
+                    <div id="inscntbtns" class="txtalgncntr">
+                        <p:commandButton value="Сохранить" process="@this insenfrm" actionListener="#{insCntrBean.saveInsConstr}" update="insenfrm"/>
+                        <p:spacer width="20px"/>
+                        <p:commandButton value="К списку договоров" process="@this" actionListener="#{insViewBean.cancelInsConstr}"
+                                         oncomplete="PF('insTable').filter();" update="insne_pnl @form:ins_pnl"/>
+                    </div>
+                </p:panel>
+
+            </p:outputPanel>
+        </h:form>
+    </h:body>
+</html>
+

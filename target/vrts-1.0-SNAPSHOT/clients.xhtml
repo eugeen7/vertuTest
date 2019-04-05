@@ -1,0 +1,158 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Список клиентов</title>
+        <script type="text/css">
+            .ui-selectonemenu .ui-selectonemenu-items {
+                font-size: 90% !important;
+            }  
+        </script>
+        <h:outputScript library="scripts" name="ru.js"/>
+        <h:outputStylesheet library="css" name="default.css"/>
+    </h:head>
+    <h:body>
+        <h:form>
+            <p:outputPanel id="mnpnl">
+                <p:messages id="msgs" closable="true" class="fnt130prcnt" redisplay="true" showDetail="true" showSummary="false">
+                    <p:autoUpdate />
+                </p:messages>
+                <p:panel id="clientspnl" visible="#{clientCntrBean.neClients == 1 ? true : false}">     
+
+                    <p:dataTable id="clientstb" value="#{clientCntrBean.plcHldrLst}" var="clnts" selectionMode="single" widgetVar="clntsTable"
+                                 selection="#{clientCntrBean.plcHldr}" rowKey="#{clnts.plchldrId}" 
+                                 filteredValue="#{clientCntrBean.fltrPlcHldrLst}" rows="5" paginator="true" resizableColumns="true"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,20"
+                                 currentPageReportTemplate="({startRecord} - {endRecord} из {totalRecords}, Стр: {currentPage}/{totalPages})"
+                                 paginatorPosition="bottom" emptyMessage="Данные не найдены"
+                                 liveResize="true" reflow="true" class="txtleft mncnt fnt130prcnt hght370px">
+
+                        <p:ajax event="rowSelect" process="clientstb" update="edinscntr"/>
+
+                        <f:facet name="header" id="clientstbhdr">
+                            <p:outputPanel id="glfltrclientstb" class="rightfl fnt110prcnt">
+                                <h:outputText value="Поиск:" />
+                                <p:spacer width="10px"/>
+                                <p:inputText id="globalFiltertb" onkeyup="PF('clntsTable').filter()" style="width:250px"/>
+                            </p:outputPanel>
+                        </f:facet>
+
+                        <p:column headerText="Фамилия" sortBy="#{clnts.surename}" filterBy="#{clnts.surename}" 
+                                  filterMatchMode="contains" style="width: 25%" filterStyle="width: 99%">
+                            <h:outputText value="#{clnts.surename}" />
+                        </p:column>
+
+                        <p:column headerText="Имя" sortBy="#{clnts.firstname}" filterBy="#{clnts.firstname}" 
+                                  filterMatchMode="contains" style="width: 20%" filterStyle="width: 99%">
+                            <h:outputText value="#{clnts.firstname}" />
+                        </p:column>
+
+                        <p:column headerText="Отчество" sortBy="#{clnts.secondname}" filterBy="#{clnts.secondname}" 
+                                  filterMatchMode="contains" style="width: 25%" filterStyle="width: 99%">
+                            <h:outputText value="#{clnts.secondname}" />
+                        </p:column>
+
+                        <p:column headerText="Дата рождения" sortBy="#{clnts.birthday}" filterFunction="#{insVldtBean.filterByDate}" filterBy="#{clnts.birthday}" style="width: 10%" filterStyle="width: 99%">
+                            <f:facet name="filter">
+                                <p:calendar id="birthd" size="10" locale="ru" pattern="dd.MM.yyyy" navigator="true"
+                                            readonlyInput="false" timeZone="#{jsfUtils.curTz}" label="Дата рождения"
+                                            converterMessage="Не правильный формат даты" validatorMessage="Не верно указана дата">
+                                    <p:ajax event="dateSelect"  oncomplete="PF('clntsTable').filter();" update="clientstb"/>
+                                    <p:ajax event="change"  oncomplete="PF('clntsTable').filter();" update="clientstb"/>
+                                </p:calendar>
+                            </f:facet>
+                            <h:outputText value="#{clnts.birthday}">
+                                <f:convertDateTime pattern="dd.MM.yyyy"  locale="ru_RU" timeZone="#{jsfUtils.curTz}"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Пасп. серия" sortBy="#{clnts.psprtSrl}" filterBy="#{clnts.psprtSrl}" 
+                                  filterMatchMode="contains" style="width: 10%" filterStyle="width: 99%">
+                            <h:outputText value="#{clnts.psprtSrl}" />
+                        </p:column>
+
+                        <p:column headerText="Пасп. номер" sortBy="#{clnts.psprtNum}" filterBy="#{clnts.psprtNum}" 
+                                  filterMatchMode="contains" style="width: 10%" filterStyle="width: 99%">
+                            <h:outputText value="#{clnts.psprtNum}" />
+                        </p:column>
+
+                        <f:facet name="footer">
+                            <div style="text-align: left;">
+
+                                <p:commandButton id="rfjbtn" value="Обновить" process="@this" actionListener="#{clientCntrBean.refreshePlcHldrLst}"
+                                                 update="clientstb" oncomplete="PF('clntsTable').filter();"/>
+                                <p:spacer width="30px"/>
+                                <p:commandButton id="edinscntr" value="Редактировать" actionListener="#{clientCntrBean.editExistClientDlg}"
+                                                 disabled="#{clientCntrBean.plcHldr == null ? true : false}"
+                                                 process="@this" update="@form:mnpnl"/>
+                                <p:spacer width="30px" height="5px"/>
+                                <p:commandButton id="newinscntr" value="Новый страхователь" actionListener="#{clientCntrBean.createNewClientDlg}"
+                                                 process="@this" update="@form:mnpnl"/>
+
+                            </div>
+                        </f:facet>
+                    </p:dataTable>
+
+                </p:panel>
+                <p:panel id="clientdatapnl" header="Новый страхователь" visible="#{clientCntrBean.neClients == 2 ? true : false}" class="fnt110prcnt">
+
+                    <h:panelGrid columns="3">
+                        <p:inputText id="surename" value="#{clientCntrBean.nePlcHldr.surename}" size="48" required="true" label="Фамилия" 
+                                     requiredMessage="Поле Фамилия должно быть заполнено"/>
+                        <p:inputText id="firstname" value="#{clientCntrBean.nePlcHldr.firstname}" size="50" required="true" label="Имя" 
+                                     requiredMessage="Поле Имя должно быть заполнено"/>
+                        <p:inputText id="secondname" value="#{clientCntrBean.nePlcHldr.secondname}" size="50" required="true" label="Отчество" 
+                                     requiredMessage="Поле Отчество должно быть заполнено"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="3" columnClasses="lngth330px, lngth330px pnglft10px, lngth200px pnglft10px">
+                        <h:outputLabel id="lbest11" value="Фамилия" />
+                        <h:outputLabel id="lbest21" value="Имя" />
+                        <h:outputLabel id="lbest31" value="Отчество" />
+                    </h:panelGrid>
+                    <p:spacer/>
+                    <p:spacer/>
+                    <p:spacer/>
+                    <h:panelGrid columns="3">
+                        <p:calendar id="dtbthedt" size="30" value="#{clientCntrBean.nePlcHldr.birthday}"
+                                    required="true" locale="ru" pattern="dd.MM.yyyy" navigator="true"
+                                    readonlyInput="false" timeZone="#{jsfUtils.curTz}" 
+                                    label="Дата рождения"
+                                    converterMessage="Не правильный формат даты" 
+                                    validatorMessage="Не верно указана дата"
+                                    requiredMessage="Дата рождения обязательна">
+                        </p:calendar>
+
+                        <p:inputText id="psprtSrl" value="#{clientCntrBean.nePlcHldr.psprtSrl}" size="50" required="true" label="Паспорт серия" 
+                                     requiredMessage="Поле Паспорт серия должно быть заполнено"/>               
+
+                        <p:inputText id="psprtNum" value="#{clientCntrBean.nePlcHldr.psprtNum}" size="50" required="true" label="Паспорт номер" 
+                                     requiredMessage="Поле Паспорт номер должно быть заполнено"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="3" columnClasses="lngth330px, lngth330px pnglft10px, lngth200px pnglft10px">
+                        <h:outputLabel id="lbest51" value="Дата рождения" />
+                        <h:outputLabel id="lbest61" value="Паспорт серия" />
+                        <h:outputLabel id="lbest71" value="Паспорт номер" />
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="2" cellpadding="3" style="font-size: 10pt; margin-top: 0.7%" >
+                        <p:commandButton id="clntstbtn" value="Сохранить" actionListener="#{clientCntrBean.savePlcHldr}" 
+                                         process="@this clientdatapnl" update="mnpnl"
+                                         title="Сохранить" style="font-size: 100% !important;"/>
+
+                        <p:commandButton id="datatbtn" value="Список" actionListener="#{clientCntrBean.openClientsDlgFrom}"
+                                     process="@this" oncomplete="PF('clntsTable').filter();" update="mnpnl" title="Список" style="font-size: 100% !important;"/>
+                    </h:panelGrid>  
+                </p:panel>
+
+                <h:panelGrid columns="1" cellpadding="3" style="font-size: 10pt; margin-top: 0.7%">
+                    <p:commandButton id="clsqstbtn" value="Подтвердить и закрыть" actionListener="#{clientCntrBean.closeDlg}" process="@this"
+                                     title="Закрыть диалоговое окно" class="fnt100prcnt mrgnbtm"/>
+                </h:panelGrid>  
+            </p:outputPanel>
+        </h:form>
+    </h:body>
+</html>
